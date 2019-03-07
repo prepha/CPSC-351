@@ -25,10 +25,6 @@ long thread_id[NUM_PHILO];
 int haveEaten[NUM_PHILO];
 
 
-
-// condition variables and associated mutex lock
-
-
 sem_t ok[NUM_PHILO] ={1,1,1,1,1};
 
 
@@ -66,7 +62,7 @@ void hungry_chopsticksAvail_eat(long i)
         ++haveEaten[i];
         state[i] = EATING;
         showAllPhilosophers();
-        sem_post(&ok[4]);
+        sem_post(&ok[i]);
        
     }
 }
