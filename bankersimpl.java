@@ -109,7 +109,7 @@ public class BankImpl implements Bank {
         {
             for (int i = 0; i < m; ++i)
             {
-                available[i] -=request[i];
+                request[i] -= available[i];
                 allocation[m][i] +=request[i];
                 need[m][i] = maximum[m][i]-allocation[m][i];
 
@@ -127,10 +127,11 @@ public class BankImpl implements Bank {
     public synchronized void releaseResources(int threadNum, int[] release)
     {
         // todo
-        for(int i=0; i<m; ++i)
+        for(int i=0; i<threadNum; ++i)
         {
-          available-=release[i];
-           allovation[m][i] +=release[i]; 
+           available[i] -=release[i];
+           allocation[threadNum][i] +=release[i];
+           need[threadNum][i] = allocation[threadNum][i] +maximum[threadNum][i];
         }
     }
 
