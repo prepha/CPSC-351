@@ -107,11 +107,12 @@ public class BankImpl implements Bank {
         // todo
         if (isSafeState(threadNum, request))
         {
-            for (int i = 0; i < m; ++i)
+            for (int i = 0; i < threadNum; ++i)
             {
-                request[i] -= available[i];
-                allocation[m][i] +=request[i];
-                need[m][i] = maximum[m][i]-allocation[m][i];
+     
+                available[i]-=request[i];
+                allocation[threadNum][i] +=available[i];
+                need[threadNum][i] = maximum[threadNum][i]-allocation[threadNum][i];
 
             }
         }
