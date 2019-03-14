@@ -130,7 +130,7 @@ public class BankImpl implements Bank {
         for(int i=0; i<threadNum; ++i)
         {
            available[i] -=release[i];
-           allocation[threadNum][i] +=release[i];
+           allocation[threadNum][i] +=available[i];
            need[threadNum][i] = allocation[threadNum][i] +maximum[threadNum][i];
         }
     }
