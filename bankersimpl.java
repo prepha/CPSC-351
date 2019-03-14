@@ -109,7 +109,7 @@ public class BankImpl implements Bank {
         {
             for (int i = 0; i < m; ++i)
             {
-                request[i] -= available[i];
+                available[i] -=request[i];
                 allocation[m][i] +=request[i];
                 need[m][i] = maximum[m][i]-allocation[m][i];
 
@@ -129,7 +129,8 @@ public class BankImpl implements Bank {
         // todo
         for(int i=0; i<m; ++i)
         {
-            System.out.print(release[i]);
+          available-=release[i];
+           allovation[m][i] +=release[i]; 
         }
     }
 
