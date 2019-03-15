@@ -124,8 +124,8 @@ public class BankImpl implements Bank {
         if (available[m] > request[m]) {
             for (int i = 0; i < threadNum; ++i) {
                 available[i] -= request[i];
-                allocation[threadNum][i] += request[i];
-                need[threadNum][i] = maximum[threadNum][i] - allocation[threadNum][i];
+                allocation[m][i] += request[i];
+                need[m][i] = maximum[m][i] - allocation[m][i];
 
             }
             return true;
@@ -143,8 +143,14 @@ public class BankImpl implements Bank {
         for (int i = 0; i < threadNum; ++i)
         {
             available[i] -= release[i];
-            allocation[threadNum][i] += available[i];
-            need[threadNum][i] = allocation[threadNum][i] + maximum[threadNum][i];
+            allocation[m][i] += available[i];
+            need[m][i] = allocation[threadNum][i] + maximum[m][i];
+        }
+
+        System.out.print("available resources after release");
+        for(int i=0;i<threadNum; i++)
+        {
+            System.out.print(available[i]);
         }
 
     }
