@@ -124,7 +124,7 @@ public class BankImpl implements Bank {
         if (available[m] > request[m]) {
             for (int i = 0; i < threadNum; ++i) {
                 available[i] -= request[i];
-                allocation[m][i] += request[i];
+                allocation[m][i] += available[i];
                 need[m][i] = maximum[m][i] - allocation[m][i];
 
             }
