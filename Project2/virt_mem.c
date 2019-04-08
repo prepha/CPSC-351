@@ -1,4 +1,3 @@
-
 //
 //  virt_mem.c
 //  virt_mem
@@ -38,32 +37,36 @@ int main(int argc, const char * argv[]) {
 
   char buf[BUFLEN];
   unsigned int page, offset, physical_add, frame = 0;
-  unsigned int logic_add;                  // read from file address.txt
+  unsigned int logic_add;                   // read from file address.txt
   unsigned int virt_add, phys_add, value;  // read from file correct.txt
 
       // not quite correct -- should search page table before creating a new entry
       //   e.g., address # 25 from addresses.txt will fail the assertion
       // TODO:  add page table code
-
       logic_add =atoi(buf);
-      page=atoi(buf); 
-      offset=atoi(buf);
+      virt_add=atoi(buf);
       phys_add=atoi(buf);
-      frame= atoi(buf);
+      value=atoi(buf);
+      page=atoi(buf);
 
-      //virt_add =page +offset;
+      virt_add =logic_add;
 
-      frame=buf[page];
+      //virt_add  =page +offset;
+
 
       for(int i=0; i<FRAME_SIZE;++i)
       {
-        if(getpage(page) ==logic_add)   // might change getpage to just page
+        if(buf[page] ==virt_add)   // might change getpage to just page
         { 
-          buf[page] = phys_add;
-          phys_add = physical_add + offset; // should work
+          frame=buf[page];
+        //  physical_add =buf[page];
+         
+        //  phys_add = physical_add + offset; // should work
+                  
+          phys_add = frame+offset;
         }
       }
-      
+    
       
       // TODO:  add TLB code
 
