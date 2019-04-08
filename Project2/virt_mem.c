@@ -59,6 +59,7 @@ int main(int argc, const char * argv[]) {
       {
         if(getpage(page) ==logic_add)   // might change getpage to just page
         { 
+          buf[page] = phys_add;
           phys_add = physical_add + offset; // should work
         }
       }
