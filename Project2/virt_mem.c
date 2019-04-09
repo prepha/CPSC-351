@@ -52,7 +52,7 @@ int main(int argc, const char * argv[]) {
       virt_add =logic_add;
 
       //virt_add  =page +offset;
-
+      //phys_add = frame + offset
 
       for(int i=0; i<FRAME_SIZE;++i)
       {
