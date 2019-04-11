@@ -46,22 +46,18 @@ int main(int argc, const char * argv[]) {
       logic_add =atoi(buf);
       virt_add=atoi(buf);
       phys_add=atoi(buf);
-      value=atoi(buf);
-      page=atoi(buf);
+      value=atoi(buf); 
+      
 
-      virt_add =logic_add;
-
-      //virt_add  =page +offset;
-      //phys_add = frame + offset
-
-      for(int i=0; i<FRAME_SIZE;++i)
+    //  logic_add = page;
+     // virt_add=page+offset;
+      //phys_add=frame+offset;
+      
+      for(int i=0; i<BUFLEN;++i)
       {
-        if(buf[page] ==virt_add)   // might change getpage to just page
+        if(page ==buf[i])  
         { 
           frame=buf[page];
-        //  physical_add =buf[page];
-         
-        //  phys_add = physical_add + offset; // should work
                   
           phys_add = frame+offset;
         }
@@ -69,10 +65,35 @@ int main(int argc, const char * argv[]) {
     
       
       // TODO:  add TLB code
+/*
+      for(int i=0; i<BUFLEN;i++)
+      {
+        
+        if(page!=buf[i])   // tlb miss go to page table
+        {
+          frame=buf[page];
+                  
+          phys_add = frame+offset;
 
+        }
+        
+        else if(page == buf[i])  // tlb hit
+        {
+          frame = buf[page];
+          phys_add = frame+offset;
 
-  while (frame < 20) 
+        }
+        else
+        {
+            //page fault
+        }
+      }
+
+*/
+
+  while (frame < 20)  //orginially 20
   {
+    
     fscanf(fcorr, "%s %s %d %s %s %d %s %d", buf, buf, &virt_add,
            buf, buf, &phys_add, buf, &value);  // read from file correct.txt
 
