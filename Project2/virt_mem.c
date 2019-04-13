@@ -35,63 +35,52 @@ int main(int argc, const char * argv[]) {
   FILE* fcorr = fopen("correct.txt", "r");
   if (fcorr == NULL) { fprintf(stderr, "Could not open file: 'correct.txt'\n");  exit(FILE_ERROR);  }
 
+  FILE * fbin =fopen("BACKING_STORE.bin","r");
+  if(fbin==NULL){fprintf(stderr,"Could not open file BACKING_STORE.bin"); exit(FILE_ERROR);}
+
   char buf[BUFLEN];
+  char pageTable[FRAME_SIZE];
   unsigned int page, offset, physical_add, frame = 0;
   unsigned int logic_add;                   // read from file address.txt
   unsigned int virt_add, phys_add, value;  // read from file correct.txt
+  int pagefault=0;
+  int tlbHit =0;
 
       // not quite correct -- should search page table before creating a new entry
       //   e.g., address # 25 from addresses.txt will fail the assertion
       // TODO:  add page table code
-      logic_add =atoi(buf);
-      virt_add=atoi(buf);
-      phys_add=atoi(buf);
-      value=atoi(buf); 
-      
-
-    //  logic_add = page;
+    
      // virt_add=page+offset;
       //phys_add=frame+offset;
-      
-      for(int i=0; i<BUFLEN;++i)
-      {
-        if(page ==buf[i])  
-        { 
-          frame=buf[page];
-                  
-          phys_add = frame+offset;
-        }
-      }
+  
     
-      
+      for(int i=0; i<FRAME_SIZE;++i)
+      {
+        if(page ==i)  
+        {  
+          frame=pageTable[i];
+        }
+        else if (page !=pageTable[i])  //  page fault-not found in page table
+        {
+          pagefault++;
+        }
+      }      
       // TODO:  add TLB code
-/*
+
       for(int i=0; i<BUFLEN;i++)
       {
         
-        if(page!=buf[i])   // tlb miss go to page table
+        if(page==buf[i])   // tlbhit 
         {
-          frame=buf[page];
-                  
-          phys_add = frame+offset;
-
-        }
+          frame=buf[i];
+          tlbHit++;
+        }   //if miss go to page table
         
-        else if(page == buf[i])  // tlb hit
-        {
-          frame = buf[page];
-          phys_add = frame+offset;
-
-        }
-        else
-        {
-            //page fault
-        }
       }
 
-*/
+        phys_add = frame+offset;
 
-  while (frame < 20)  //orginially 20
+  while (frame < 20) 
   {
     
     fscanf(fcorr, "%s %s %d %s %s %d %s %d", buf, buf, &virt_add,
@@ -105,6 +94,19 @@ int main(int argc, const char * argv[]) {
     
     assert(physical_add == phys_add);
     // todo: read BINARY_STORE and confirm value matches read value from correct.txt
+         fscanf(fbin,"%d",&value);
+          fseek(fcorr,value,SEEK_SET);
+          fread(buf,value,BUFLEN,fcorr);
+          for(int i=0;i<BUFLEN;i++)
+          {
+           if(buf[i] == page)
+           {
+             value=buf[i];
+
+           }
+          }
+          
+
     printf("logical: %5u (page:%3u, offset:%3u) ---> physical: %5u -- passed\n", logic_add, page, offset, physical_add);
     if (frame % 5 == 0) { printf("\n"); }
   }
@@ -114,6 +116,8 @@ int main(int argc, const char * argv[]) {
   printf("ALL logical ---> physical assertions PASSED!\n");
   printf("!!! This doesn't work passed entry 24 in correct.txt, because of a duplicate page table entry\n");
   printf("--- you have to implement the PTE and TLB part of this code\n");
+  printf("Page fault rate %d\n",pagefault);
+  printf("TLB hit rate %d\n",tlbHit);
   printf("\n\t\t...done.\n");
   return 0;
 }
