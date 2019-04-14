@@ -38,11 +38,11 @@ int main(int argc, const char * argv[]) {
   FILE * fbin =fopen("BACKING_STORE.bin","rb");
   if(fbin==NULL){fprintf(stderr,"Could not open file BACKING_STORE.bin"); exit(FILE_ERROR);}
 
-  char buf[BUFLEN];
+  char buf[BUFLEN] ={-1};
   int pageTable[FRAME_SIZE] ={-1};
-  int TLB[16]={-1};
+  
   int phys_mem[FRAME_SIZE][BUFLEN];
-  int back_binary[FRAME_SIZE];
+  
 
   unsigned int page, offset, physical_add, frame = 0;
   unsigned int logic_add;                   // read from file address.txt
@@ -50,16 +50,11 @@ int main(int argc, const char * argv[]) {
   int pagefault=0;
   int tlbHit =0;
  
- //  phys_add = frame[0]+ offset;
-
       // not quite correct -- should search page table before creating a new entry
       //   e.g., address # 25 from addresses.txt will fail the assertion
       // TODO:  add page table code
     
-     // virt_add=page+offset;
-      //phys_add=frame+offset;
 
-    
    int l=0;
    
    while(l<FRAME_SIZE)
@@ -70,32 +65,42 @@ int main(int argc, const char * argv[]) {
       for(int i=0; i<FRAME_SIZE;i++)
       {
         pageTable[i]=page;
-       
         frame=pageTable[i];
-        phys_add=frame+offset;
-      //  phys_mem[i]= phys_add;  
+        phys_add=frame+offset;  
+
+        if(page !=pageTable[i])
+      {
+        pagefault++;
+      }
       } 
       l++;
    }
  
       // TODO:  add TLB code
-      /*
+      int bufsize=16;
       while(l<FRAME_SIZE)
       {
- fscanf(fcorr, "%s %s %d %s %s %d %s %d", buf, buf, &virt_add,
-           buf, buf, &phys_add, buf, &value);
-      for(int i=0; i<16;i++)
+         fscanf(fcorr, "%s %s %d %s %s %d %s %d", buf, buf, &virt_add,buf, buf, &phys_add, buf, &value);
+        
+        page=getpage(virt_add);
+        offset = getoffset(virt_add);
+      for(int i=0; i<bufsize;i++)
       {
-        if(page==TLB[i])   // tlbhit 
+        if(page==buf[i])   // tlbhit 
         {
+          buf[i]=page;
           frame=buf[i];
+          phys_add=frame+offset;
+
           tlbHit++;
-        }   //if miss go to page table
+
+          buf[i]=buf[i+1];  //fifo
+        }  
         
       }
       }
-*/
-  while (frame < 50) //originally 20
+
+  while (frame < 20) 
   {
     
     fscanf(fcorr, "%s %s %d %s %s %d %s %d", buf, buf, &virt_add,
@@ -119,8 +124,7 @@ int main(int argc, const char * argv[]) {
             phys_mem[nextFrame][i]=buf[i];
             pageTable[page]=nextFrame;
              nextFrame++;
-          } 
-        value=phys_mem[frame][offset]; 
+          }  
 
     printf("logical: %5u (page:%3u, offset:%3u) ---> physical: %5u -- passed\n", logic_add, page, offset, physical_add);
     if (frame % 5 == 0) { printf("\n"); }
