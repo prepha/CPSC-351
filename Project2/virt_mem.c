@@ -49,7 +49,7 @@ int main(int argc, const char * argv[]) {
   unsigned int virt_add, phys_add, value;  // read from file correct.txt
   int pagefault=0;
   int tlbHit =0;
-  int nextFrame =0;
+ 
  //  phys_add = frame[0]+ offset;
 
       // not quite correct -- should search page table before creating a new entry
@@ -84,9 +84,9 @@ int main(int argc, const char * argv[]) {
       {
  fscanf(fcorr, "%s %s %d %s %s %d %s %d", buf, buf, &virt_add,
            buf, buf, &phys_add, buf, &value);
-      for(int i=0; i<BUFLEN;i++)
+      for(int i=0; i<16;i++)
       {
-        if(page==buf[i])   // tlbhit 
+        if(page==TLB[i])   // tlbhit 
         {
           frame=buf[i];
           tlbHit++;
@@ -110,19 +110,17 @@ int main(int argc, const char * argv[]) {
     assert(physical_add == phys_add);
     // todo: read BINARY_STORE and confirm value matches read value from correct.txt
       
-        fopen("BACKING_STORE.bin","rb");
-    
+       int nextFrame =0;
+          fopen("BACKING_STORE.bin","rb");
           fseek(fbin,FRAME_SIZE,SEEK_SET);
-          fread(back_binary,page,FRAME_SIZE,fbin);
+          fread(buf,page,FRAME_SIZE,fbin);
           for(int i=0;i<FRAME_SIZE;i++)
           {
-            phys_mem[nextFrame][i]=back_binary[i];
+            phys_mem[nextFrame][i]=buf[i];
             pageTable[page]=nextFrame;
              nextFrame++;
-          }
-    
-                
-         
+          } 
+        value=phys_mem[frame][offset]; 
 
     printf("logical: %5u (page:%3u, offset:%3u) ---> physical: %5u -- passed\n", logic_add, page, offset, physical_add);
     if (frame % 5 == 0) { printf("\n"); }
